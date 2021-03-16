@@ -9,6 +9,12 @@
   "author": "Krystian Migura",
   "license": "ISC",
   "dependencies": {
-    "express.js": "^1.0.0"
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express.js": "^1.0.0",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
+    "jsonwebtoken": "^8.5.1"
   }
 }
