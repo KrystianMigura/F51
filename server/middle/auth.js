@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 async function authorization (req, res, next) {
+    console.log(req , "<<<<<<<<< HEADERS", Object.keys(req))
     const bearerHeader = req.headers['authorization'];
     if(typeof bearerHeader !=='undefined') {
         const bearerToken =  bearerHeader.split(' ')[1];

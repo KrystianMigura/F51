@@ -6,4 +6,4 @@ async function homePage(req, res){
     res.status(200).send({userDetail, homepage: "homepage"});
 }
 
-module.exports = { homePage }
+module.exports = { homePage };

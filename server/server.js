@@ -6,6 +6,7 @@ const app = express();
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const path = require('path');
 
 
 class Server {
@@ -27,9 +28,13 @@ class Server {
 
         app.use(bodyParser.json({parameterLimit: 1000, limit: '10mb'}));
         app.use(bodyParser.urlencoded({limit: '2mb', extended: true}));
+        app.use(express.static("public"));
 
         this.app.use((req, res, next) => {
             res.setHeader("Content-Type", "application/json");
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "*");
+            res.header("Access-Control-Allow-Headers", "authorization", "Origin, X-Requested-With, Content-Type, Accept");
             next();
         });
 

@@ -1,0 +1,29 @@
+<html>
+<body>
+<h1>Dashboard</h1>
+</body>
+
+
+<script>
+    (function(){
+        if(localStorage.getItem("token")){
+            $.ajax({
+                url: "https://localhost:8443/auth",
+                type: 'POST',
+                data: {
+                    token: localStorage.getItem("token")
+                },
+                "Content-Type": 'application/json',
+                success: function (msg, textStatus, request) {
+                    if(msg.token)
+                        window.open("/details", "_self")
+
+                    window.open("/login", "_self")
+                }
+            })
+        } else {
+            window.open("/login", "_self")
+        }
+    })();
+</script>
+</html>
