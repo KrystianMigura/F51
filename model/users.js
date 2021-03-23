@@ -14,7 +14,7 @@ const user = [
 class Users {
     constructor() {
         this.user = user;
-        this.collection = "Users"
+        this.collection = "Users";
         this.re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     }
 

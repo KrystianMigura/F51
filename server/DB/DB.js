@@ -39,11 +39,19 @@ class MongoDB {
         })
     }
 
-    search(collection, query) {
+    search(collection, query, element) {
          return this.client.connect(`${this.url + this.port}`, (err, db) => {
              if (err) throw err;
              let dbo = db.db("myDatabase");
-             dbo.collection(collection).find(query);
+             dbo.collection(`${collection}`).find(query).toArray((error, object) => {
+                 return element(object[0])
+                 db.close();
+             })
+
+
+
+
+
          });
     }
 }

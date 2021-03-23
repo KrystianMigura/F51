@@ -1,25 +1,28 @@
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const { mongo } = require('../DB/DB');
+const { users } = require('../../model/users');
 
 async function login(req, res){
-    //{ username, password } = user
-    console.log(req.body)
-    const { user } = req.body;
-    //cmp in database
-    /*
-    code
-     */
-    //generate access token for user
-    try {
-        jwt.sign({user: req.body}, 'secretkey', {expiresIn: '3600s'}, (err, token) => {
-            res.status(200).json({
-                token,
-            })
-        })
-    } catch (e) {
-        res.status(403).send({message: "ERROR"})
+    const { username, password } = req.body;
+
+    function test (user) {
+        if (user !== undefined) {
+            try {
+                jwt.sign({user: user}, 'secretkey', {expiresIn: '3600s'}, (err, token) => {
+                    res.status(200).json({
+                        token
+                    })
+                })
+            } catch (e) {
+                res.status(403).send({message: "ERROR"})
+            }
+        } else {
+            res.status(401).send({message: "Unauthorized"})
+        }
     }
 
+    mongo.search(users.collection, {"nickName" : username , password: password}, test);
 }
 
 async function login_panel(req, res) {
@@ -29,4 +32,8 @@ async function login_panel(req, res) {
 
 }
 
-module.exports = { login, login_panel }
+async function test (req, res) {
+    res.status(200).send({message: "ok"})
+}
+
+module.exports = { login, login_panel, test }

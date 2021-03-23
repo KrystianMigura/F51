@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 async function authorization (req, res, next) {
-    console.log(req , "<<<<<<<<< HEADERS", Object.keys(req))
-    const bearerHeader = req.headers['authorization'];
+    const bearerHeader = req.headers['token'];
     if(typeof bearerHeader !=='undefined') {
         const bearerToken =  bearerHeader.split(' ')[1];
         req.token = bearerToken;
@@ -11,8 +10,9 @@ async function authorization (req, res, next) {
             if(err){
                 res.status(403).send({"error":"Unauthorization"})
             } else {
-                next();
+                next(res.status(200).send(authData))
             }
+
         });
     } else {
         res.status(403).send({"error":"Unauthorization"}) //forbidden
