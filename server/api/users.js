@@ -1,5 +1,6 @@
 'use strict';
 const { users } = require('../../model/users');
+const { family } = require('../../model/family');
 const { mongo } = require('../DB/DB');
 let flag = true;
 
@@ -28,10 +29,26 @@ async function findEmail(email, callback) {
 }
 
 async function createAdmin(req, res) {
+    const database = mongo.db;
+    let familyID;
     flag = true;
     const { email, firstName, lastName, nickName, password } = req.body;
     const validEmail = await users.emailValidation(email);
     const valid = await users.notNullValid(req.body);
+
+    if(req.body.accountType) {
+        const familyValue = {
+            FamilyName: lastName,
+            Money: 1000.99
+        };
+
+        const notNull = await family.notNullValid(familyValue);
+        const familyStartMoney = await family.money(parseFloat(familyValue.Money));
+        if(notNull && familyStartMoney){
+           familyID = (await database.collection(`${family.collection}`).insertOne({"FamilyName": familyValue.FamilyName, "Money":familyValue.Money})).ops[0]._id;
+        }
+
+    }
 
     if(validEmail) {
         const value = valid.map((a, b) => {
@@ -54,34 +71,13 @@ async function createAdmin(req, res) {
             if(x.length !== 0) {
                 res.status(201).send({message: "taki email juz istnieje"})
             }else {
-                const database = mongo.db;
-                database.collection(`${users.collection}`).insertOne({"firstName": firstName, "lastName": lastName, "nickName":nickName, "password": password, "email": email, "familyID": null, "accountType": "SuperAdmin"})
+                database.collection(`${users.collection}`).insertOne({"firstName": firstName, "lastName": lastName, "nickName":nickName, "password": password, "email": email, "familyID": new Object(familyID), "accountType": (req.body.accountType)? req.body.accountType : "SuperAdmin"})
                 res.status(201).send({message: "Konto zostało stworzone"})
             }
         });
     } else {
         res.status(200).send({value: "Zły adres mailowy"})
     }
-
-
-    //
-    // const validFirstName = await users.notNullValid(firstName);
-    // const validLastName = await users.notNullValid(lastName);
-    // const validNickName = await users.notNullValid(nickName);
-    // const validPassword = await users.notNullValid(password);
-
-
-    // if(validEmail && validLastName && validLastName && validNickName && validPassword && validFirstName)
-
-
-    // const response = {
-    //     email: validEmail,
-    //     firstName: validFirstName,
-    //     lastName: validLastName,
-    //     nickName: validNickName,
-    //     password: validPassword
-    // };
-    // res.status(200).send(valid)
 }
 
 

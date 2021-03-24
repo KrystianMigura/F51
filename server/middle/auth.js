@@ -10,7 +10,7 @@ async function authorization (req, res, next) {
             if(err){
                 res.status(403).send({"error":"Unauthorization"})
             } else {
-                next(res.status(200).send(authData))
+                next()
             }
 
         });

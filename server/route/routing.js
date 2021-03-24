@@ -10,33 +10,23 @@ const routes = {
             "path" : './api/dashboard'
         },
         {
-            "endpointName" : "/register",
-            "function" : "test",
-            //"middle" : authorization, //autoryzacja w warstwie middle
-            "path" : './api/login'
-        },
-        {
             "endpointName" : "/home",
             "function" : "homePage",
             // "middle" : authorization, //autoryzacja w warstwie middle
             "path" : './api/homePage'
         },
-        // {
-        //     "endpointName" : "/details",
-        //     "function" : "Details",
-        //     // "middle" : authorization, //autoryzacja w warstwie middle
-        //     "path" : './api/Details'
-        // },
-        {
-            "endpointName" : "/login",
-            "function" : "login_panel",
-            "path" : './api/login'
-        },
         {
             "endpointName" : "/isadmin",
             "function" : "findAdmin",
             "path" : './api/users'
-        }
+        },
+        {
+            "endpointName" : "/getFamily",
+            "function" : "getFamily",
+            "middle" : authorization,
+            "path" : './api/family'
+        },
+
     ],
     post: [
         {
@@ -54,18 +44,16 @@ const routes = {
             "endpointName" : "/adminCreate",
             "function" : "createAdmin",
             "path" : './api/users'
-        }
+        },
+        {
+            "endpointName" : "/familyDetails",
+            "function" : "getOne",
+            "middle" : authorization,
+            "path" : './api/family'
+        },
     ],
     put: [],
     delete: [],
-    options: [
-        {
-            "endpointName" : "/register",
-            "function" : "test",
-            //"middle" : authorization, //autoryzacja w warstwie middle
-            "path" : './api/login'
-        }
-    ]
 };
 
 module.exports = { routes };

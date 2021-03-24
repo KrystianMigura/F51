@@ -25,15 +25,6 @@ async function login(req, res){
     mongo.search(users.collection, {"nickName" : username , password: password}, test);
 }
 
-async function login_panel(req, res) {
-    const dir = path.join(__dirname, "public", '../../../client_panel/login_panel/login.html');
-    res.set({'Content-Type': 'text/html'});
-    res.status(200).sendFile(dir);
 
-}
 
-async function test (req, res) {
-    res.status(200).send({message: "ok"})
-}
-
-module.exports = { login, login_panel, test }
+module.exports = { login }

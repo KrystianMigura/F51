@@ -27,6 +27,8 @@ class Users {
             if(typeof elem[`${singleElement.name}`] === singleElement.type) {
                 if (singleElement.required) {
                     return (elem[`${singleElement.name}`]) ? true : false;
+                } else {
+                    return false;
                 }
             } else {
                 return false;
