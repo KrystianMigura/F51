@@ -1,6 +1,7 @@
 'use strict';
 const { mongo } = require('../DB/DB');
 const { family } = require('../../model/family');
+const { users } = require('../../model/users')
 const ObjectId = require('mongodb').ObjectId;
 
 async function getFamily(req, res) {
@@ -20,11 +21,18 @@ async function getFamily(req, res) {
 async function getOne(req, res) {
     function listener(data) {
         res.status(200).send(data);
-
     }
 
     mongo.search(`${family.collection}`,{_id: ObjectId(req.body._id)}, listener)
     // mongo.search(users.collection, {"nickName" : username , password: password}, test);
 }
 
-module.exports = { getFamily, getOne }
+async function getMany(req, res) {
+    function listener(data) {
+        res.status(200).send(data);
+    }
+
+    mongo.search(`${users.collection}`,{familyID: ObjectId(req.body.familyID)}, listener)
+}
+
+module.exports = { getFamily, getOne, getMany }

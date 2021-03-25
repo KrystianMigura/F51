@@ -7,7 +7,7 @@ const user = [
     {name: "nickName", type: "string", required: true },
     {name: "email", type: "string", required: true },
     {name: "password", type: "string", required: true },
-    {name: "familyID", type: "ObjectID", required: false },
+    {name: "familyID", type: "string", required: true }, // zmiana na true
     {name: "accountType", type: "string", required: false }
 ];
 

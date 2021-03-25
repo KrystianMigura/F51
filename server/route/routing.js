@@ -51,6 +51,12 @@ const routes = {
             "middle" : authorization,
             "path" : './api/family'
         },
+        {
+            "endpointName" : "/myFamily",
+            "function" : "getMany",
+            "middle" : authorization,
+            "path" : './api/family'
+        }
     ],
     put: [],
     delete: [],

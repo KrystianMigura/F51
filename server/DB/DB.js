@@ -44,8 +44,10 @@ class MongoDB {
              if (err) throw err;
              let dbo = db.db("myDatabase");
              dbo.collection(`${collection}`).find(query).toArray((error, object) => {
-                 console.log(object ,"<<<<<<< OBJECT!!!")
-                 return element(object[0])
+                 if(object.length > 1)
+                     return element(object);
+
+                 return element(object[0]);
                  db.close();
              })
          });

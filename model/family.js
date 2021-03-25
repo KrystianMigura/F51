@@ -12,7 +12,6 @@ class Family {
     }
 
     async notNullValid(elem) {
-
         return this.family.map(singleElement => {
             console.log(typeof elem[`${singleElement.name}`], "<><><><>" , singleElement.type)
             if(typeof elem[`${singleElement.name}`] === singleElement.type) {
