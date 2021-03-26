@@ -34,7 +34,8 @@ class Server {
             res.setHeader("Content-Type", "application/json");
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "*");
-            res.header("Access-Control-Allow-Headers", "token", "Origin, X-Requested-With, Content-Type, Accept");
+            res.header("Access-Control-Allow-Methods", "POST, PUT, GET");
+            // res.header("Access-Control-Allow-Headers", "token", "Origin, X-Requested-With, Content-Type, Accept");
             next();
         });
 

@@ -35,7 +35,6 @@ async function createAdmin(req, res) {
     flag = true;
     const { email, firstName, lastName, nickName, password } = req.body;
     const validEmail = await users.emailValidation(email);
-    const valid = await users.notNullValid(req.body);
 
     if(req.body.accountType === "the_head_of_the_family") {
         const familyValue = {
@@ -43,14 +42,16 @@ async function createAdmin(req, res) {
             Money: 1000
         };
 
-        const notNull = await family.notNullValid(familyValue);
-        const familyStartMoney = await family.money(parseFloat(familyValue.Money));
-        if(notNull && familyStartMoney){
-           familyID = (await database.collection(`${family.collection}`).insertOne({"FamilyName": familyValue.FamilyName, "Money":familyValue.Money})).ops[0]._id;
-        }
+        // const notNull = await family.notNullValid(familyValue);
+        // const familyStartMoney = await family.money(parseFloat(familyValue.Money));
+        familyID = (await database.collection(`${family.collection}`).insertOne({"FamilyName": familyValue.FamilyName, "Money":familyValue.Money})).ops[0]._id;
+
     } else {
         familyID = new ObjectId(req.body.familyID);
     }
+
+    req.body.familyId = familyID.toString();
+    const valid = await users.notNullValid(req.body);
 
     if(validEmail) {
         const value = valid.map((a, b) => {
@@ -58,15 +59,21 @@ async function createAdmin(req, res) {
                 console.log(users.user[b].required, "<><><><>" ,a, users.user[b]); // gdzie wystepuje problem z walidacja
                 return false;
             }
+
             if (valid.length - 1 === b)
                 return true;
         });
+
         value.forEach(x => {
             if(x === false) {
                 flag = false;
 
             }
         });
+
+        if(!flag)
+            res.status(500).send({message: "internal server error"})
+
         if(flag)
         await findEmail(email,(x) => {
             if(x.length !== 0) {

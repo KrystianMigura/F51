@@ -1,6 +1,7 @@
 'use strict'
 const MongoClient = require('mongodb').MongoClient;
-
+const { expenses } = require('./../../model/expenses');
+const ObjectId = require('mongodb').ObjectId;
 
 class MongoDB {
     constructor () {
@@ -52,6 +53,37 @@ class MongoDB {
              })
          });
     }
+
+    update(collection, query, callback) {
+        return this.client.connect(`${this.url + this.port}`, async (err, db) => {
+            if (err) throw err;
+            let dbo = db.db("myDatabase");
+            const { familyID, Money } = query;
+
+            let doc = await dbo.collection(`${collection}`).findOne({_id: familyID});
+            const filter = {Money: doc.Money};
+            const newMoneyVal = parseFloat(filter.Money) + parseFloat(Money);
+            await dbo.collection(`${collection}`).updateOne(filter, {$set: {Money: newMoneyVal}},{ upsert: true });
+            const data = (new Date().toString().split("GMT+"))[0];
+            const element = {price: Money, nickName: 'SuperAdmin', date: data, familyID: ObjectId(familyID), details: `zmiana wartości o ${Money}`.toString()}
+
+
+            const newValue = await expenses.notNullValid(element);
+            let flag = true;
+
+            newValue.forEach((elem => {
+                if(elem === false)
+                    flag = false
+            }));
+
+            if(flag)
+                await dbo.collection(`${expenses.collection}`).insertOne(element);
+
+            callback(true);
+            db.close();
+
+        });
+    }
 }
 
-module.exports = {mongo : new MongoDB()}
+module.exports = { mongo : new MongoDB() };

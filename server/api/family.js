@@ -35,4 +35,13 @@ async function getMany(req, res) {
     mongo.search(`${users.collection}`,{familyID: ObjectId(req.body.familyID)}, listener)
 }
 
-module.exports = { getFamily, getOne, getMany }
+async function accountOperation(req, res) {
+    function listener(data) {
+        res.status(200).send(data)
+    }
+
+    await mongo.update(`${family.collection}`, {familyID: ObjectId(req.body.familyID), Money: req.body.change }, listener)
+    res.status(200).send({message: "success"})
+}
+
+module.exports = { getFamily, getOne, getMany, accountOperation }

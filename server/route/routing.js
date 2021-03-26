@@ -12,7 +12,6 @@ const routes = {
         {
             "endpointName" : "/home",
             "function" : "homePage",
-            // "middle" : authorization, //autoryzacja w warstwie middle
             "path" : './api/homePage'
         },
         {
@@ -35,11 +34,6 @@ const routes = {
             //"middle" : authorization, //autoryzacja w warstwie middle
             "path" : './api/login'
         },
-        // {
-        //     "endpointName" : "/auth",
-        //     "function" : "authorization",
-        //     "path" : './middle/auth'
-        // },
         {
             "endpointName" : "/adminCreate",
             "function" : "createAdmin",
@@ -56,9 +50,22 @@ const routes = {
             "function" : "getMany",
             "middle" : authorization,
             "path" : './api/family'
+        },
+        {
+            "endpointName" : "/expensesDetail",
+            "function" : "getMany",
+            "middle" : authorization,
+            "path" : './api/expense'
         }
     ],
-    put: [],
+    put: [
+        {
+            "endpointName" : "/accountOperation",
+            "function" : "accountOperation",
+            "middle" : authorization,
+            "path" : './api/family'
+        }
+    ],
     delete: [],
 };
 
