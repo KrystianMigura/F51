@@ -40,7 +40,11 @@ async function accountOperation(req, res) {
         res.status(200).send(data)
     }
 
-    await mongo.update(`${family.collection}`, {familyID: ObjectId(req.body.familyID), Money: req.body.change }, listener)
+    let user = req.body.user || 'SuperAdmin';
+    let description = req.body.description || null;
+    let userID = req.body._id || null;
+
+     await mongo.update(`${family.collection}`, {familyID: ObjectId(req.body.familyID), Money: req.body.change }, listener, user, description ,userID )
     res.status(200).send({message: "success"})
 }
 

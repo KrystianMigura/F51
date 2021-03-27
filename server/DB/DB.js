@@ -45,16 +45,22 @@ class MongoDB {
              if (err) throw err;
              let dbo = db.db("myDatabase");
              dbo.collection(`${collection}`).find(query).toArray((error, object) => {
-                 if(object.length > 1)
-                     return element(object);
 
-                 return element(object[0]);
+                if(object.length < 1)
+                    return element({message: "Not Found"});
+
+                 if(object.length > 1) {
+                     return element(object);
+                 } else {
+                     return element(object[0]);
+                 }
+
                  db.close();
              })
          });
     }
 
-    update(collection, query, callback) {
+    update(collection, query, callback, user, description, userID) {
         return this.client.connect(`${this.url + this.port}`, async (err, db) => {
             if (err) throw err;
             let dbo = db.db("myDatabase");
@@ -65,7 +71,15 @@ class MongoDB {
             const newMoneyVal = parseFloat(filter.Money) + parseFloat(Money);
             await dbo.collection(`${collection}`).updateOne(filter, {$set: {Money: newMoneyVal}},{ upsert: true });
             const data = (new Date().toString().split("GMT+"))[0];
-            const element = {price: Money, nickName: 'SuperAdmin', date: data, familyID: ObjectId(familyID), details: `zmiana wartości o ${Money}`.toString()}
+
+            if(user === null)
+                user = 'SuperAdmin';
+
+            if(description === null)
+                description = `zmiana wartości o ${Money}`;
+
+
+            const element = {price: Money, nickName: user, date: data, familyID: ObjectId(familyID), details: description.toString()}
 
 
             const newValue = await expenses.notNullValid(element);

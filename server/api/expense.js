@@ -10,7 +10,14 @@ async function getMany(req, res) {
         res.status(200).send(data);
     }
 
-    mongo.search(`${expenses.collection}`,{familyID: ObjectId(req.body.familyID)}, listener)
+    let query = {};
+    if(req.body.nickName) {
+        query = {familyID: ObjectId(req.body.familyID), nickName: req.body.nickName}
+    } else {
+        query = {familyID: ObjectId(req.body.familyID)};
+    }
+
+    mongo.search(`${expenses.collection}`,query, listener, )
 }
 
 
