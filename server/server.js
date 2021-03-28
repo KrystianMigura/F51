@@ -26,7 +26,6 @@ class Server {
         //config
         app.use(bodyParser.json({parameterLimit: 1000, limit: '10mb'}));
         app.use(bodyParser.urlencoded({limit: '2mb', extended: true}));
-        app.use(express.static("public"));
 
         //headers
         this.app.use((req, res, next) => {
