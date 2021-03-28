@@ -44,7 +44,14 @@ async function createAdmin(req, res) {
 
         // const notNull = await family.notNullValid(familyValue);
         // const familyStartMoney = await family.money(parseFloat(familyValue.Money));
-        familyID = (await database.collection(`${family.collection}`).insertOne({"FamilyName": familyValue.FamilyName, "Money":familyValue.Money})).ops[0]._id;
+        try {
+            familyID = (await database.collection(`${family.collection}`).insertOne({
+                "FamilyName": familyValue.FamilyName,
+                "Money": familyValue.Money
+            })).ops[0]._id;
+        } catch (e) {
+            console.log(e)
+        }
 
     } else {
         familyID = new ObjectId(req.body.familyID);
@@ -67,21 +74,30 @@ async function createAdmin(req, res) {
         value.forEach(x => {
             if(x === false) {
                 flag = false;
-
             }
         });
 
         if(!flag)
-            res.status(500).send({message: "internal server error"})
+            res.status(500).send({message: "internal server error"});
 
         if(flag)
-        await findEmail(email,(x) => {
+        await findEmail(email,async (x) => {
             if(x.length !== 0) {
-                res.status(201).send({message: "taki email juz istnieje"})
-            }else {
-                console.log(typeof familyID ,"last step!!!!", "<><><>")
-                database.collection(`${users.collection}`).insertOne({"firstName": firstName, "lastName": lastName, "nickName":nickName, "password": password, "email": email, "familyID": new Object(familyID), "accountType": (req.body.accountType)? req.body.accountType : "SuperAdmin"})
-                res.status(201).send({message: "Konto zostało stworzone"})
+                try {
+                await database.collection(`${family.collection}`).remove({_id: familyID});
+                } catch (e) {
+                    console.log(e);
+                    res.status(400).send({message: "Error remove"});
+                }
+                res.status(201).send({valid: true, message: "taki email juz istnieje"})
+            } else {
+                try {
+                    database.collection(`${users.collection}`).insertOne({"firstName": firstName, "lastName": lastName, "nickName":nickName, "password": password, "email": email, "familyID": new Object(familyID), "accountType": (req.body.accountType)? req.body.accountType : "SuperAdmin"})
+                } catch (e) {
+                    console.log(e);
+                    res.status(400).send({message: "Error insert"})
+                }
+                res.status(201).send({valid: false, message: "Konto zostało stworzone"})
             }
         });
     } else {

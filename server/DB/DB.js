@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const MongoClient = require('mongodb').MongoClient;
 const { expenses } = require('./../../model/expenses');
 const ObjectId = require('mongodb').ObjectId;
@@ -15,7 +15,7 @@ class MongoDB {
     }
 
     openConnect() {
-        this.client.connect(`${this.url+this.port}`, (err,db) => {
+        this.client.connect(`${this.url + this.port}`, (err, db) => {
             if (err) throw err;
             this.dbClose = db;
             this.db = db.db('myDatabase');
@@ -44,23 +44,22 @@ class MongoDB {
          return this.client.connect(`${this.url + this.port}`, (err, db) => {
              if (err) throw err;
              let dbo = db.db("myDatabase");
-             dbo.collection(`${collection}`).find(query).toArray((error, object) => {
+             dbo.collection(`${collection}`).find(query).sort({date: -1}).toArray((error, object) => {
 
                 if(object.length < 1)
                     return element({message: "Not Found"});
 
-                 if(object.length > 1) {
-                     return element(object);
-                 } else {
-                     return element(object[0]);
-                 }
-
-                 db.close();
+                if(object.length > 1) {
+                    return element(object);
+                } else {
+                    return element(object[0]);
+                }
+                db.close();
              })
          });
     }
 
-    update(collection, query, callback, user, description, userID) {
+    update(collection, query, callback, user, description) {
         return this.client.connect(`${this.url + this.port}`, async (err, db) => {
             if (err) throw err;
             let dbo = db.db("myDatabase");
@@ -69,7 +68,18 @@ class MongoDB {
             let doc = await dbo.collection(`${collection}`).findOne({_id: familyID});
             const filter = {Money: doc.Money};
             const newMoneyVal = parseFloat(filter.Money) + parseFloat(Money);
-            await dbo.collection(`${collection}`).updateOne(filter, {$set: {Money: newMoneyVal}},{ upsert: true });
+
+            if(newMoneyVal < 0) {
+                callback(false);
+                return false;
+            }
+
+            try {
+                await dbo.collection(`${collection}`).updateOne(filter, {$set: {Money: newMoneyVal}}, {upsert: true});
+            } catch (e) {
+                console.log(e)
+            }
+
             const data = (new Date().toString().split("GMT+"))[0];
 
             if(user === null)
@@ -78,9 +88,7 @@ class MongoDB {
             if(description === null)
                 description = `zmiana wartości o ${Money}`;
 
-
             const element = {price: Money, nickName: user, date: data, familyID: ObjectId(familyID), details: description.toString()}
-
 
             const newValue = await expenses.notNullValid(element);
             let flag = true;
@@ -90,12 +98,16 @@ class MongoDB {
                     flag = false
             }));
 
-            if(flag)
-                await dbo.collection(`${expenses.collection}`).insertOne(element);
+            if(flag) {
+                try {
+                    await dbo.collection(`${expenses.collection}`).insertOne(element);
+                } catch (e) {
+                    console.log(e)
+                }
+            }
 
             callback(true);
             db.close();
-
         });
     }
 }

@@ -8,7 +8,6 @@ const http = require('http');
 const https = require('https');
 const path = require('path');
 
-
 class Server {
     constructor() {
         this.app = app;
@@ -18,18 +17,18 @@ class Server {
         this.route = routes;
         this.createRouting(this.route);
         this.createServer();
-
     }
 
     createRouting(routeJson) {
         const keys = Object.keys(routeJson.routes);
         const element = routeJson.routes;
 
-
+        //config
         app.use(bodyParser.json({parameterLimit: 1000, limit: '10mb'}));
         app.use(bodyParser.urlencoded({limit: '2mb', extended: true}));
         app.use(express.static("public"));
 
+        //headers
         this.app.use((req, res, next) => {
             res.setHeader("Content-Type", "application/json");
             res.header("Access-Control-Allow-Origin", "*");
@@ -39,21 +38,20 @@ class Server {
             next();
         });
 
+        //routes
         keys.map( async a => {
             await element[a].forEach(singleElement => {
-                console.log(singleElement)
                 try {
                     this.app[`${a}`](`${singleElement.endpointName}`, singleElement.middle, require(`${singleElement.path}`)[`${singleElement.function}`]);
                 } catch(e) {
+                    //no middle value
                     this.app[`${a}`](`${singleElement.endpointName}`, require(`${singleElement.path}`)[`${singleElement.function}`]);
-
                 }
-            })
-        })
+            });
+        });
     }
 
     createServer() {
-
         const httpsServer = https.createServer(this.credentials, this.app);
         const httpServer = http.createServer(this.app);
 
@@ -68,10 +66,7 @@ class Server {
         } catch(err) {
             console.log(err);
         }
-
     }
-
-
 }
 
 module.exports = { server: new Server()}

@@ -3,10 +3,11 @@ const { mongo } = require('../DB/DB');
 const { expenses } = require('../../model/expenses');
 const ObjectId = require('mongodb').ObjectId;
 
-
 async function getMany(req, res) {
     function listener(data) {
-        console.log( " <<<<< DAta" , data)
+        if(data.error){
+            res.status(400).send({message: "Search Error"});
+        }
         res.status(200).send(data);
     }
 
@@ -16,8 +17,12 @@ async function getMany(req, res) {
     } else {
         query = {familyID: ObjectId(req.body.familyID)};
     }
-
-    mongo.search(`${expenses.collection}`,query, listener, )
+    try {
+        mongo.search(`${expenses.collection}`, query, listener,)
+    } catch (e) {
+        listener({error: true})
+        console.log(e)
+    }
 }
 
 

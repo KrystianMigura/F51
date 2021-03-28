@@ -1,6 +1,4 @@
 'use strict';
-const { mongo } = require('../server/DB/DB');
-
 const user = [
     {name: "firstName", type: "string", required: true },
     {name: "lastName", type: "string", required: true },
@@ -35,7 +33,6 @@ class Users {
             }
         });
     };
-
 }
 
 module.exports = { users : new Users()};

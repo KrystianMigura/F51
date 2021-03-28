@@ -2,7 +2,7 @@ const expense = [
     {name: "price", type: "string", required: true },
     {name: "nickName", type: "string", required: true },
     {name: "date", type: "string", required: true },
-    {name: "familyID", type: "object", required: true }, // zmiana na true
+    {name: "familyID", type: "object", required: true },
     {name: "details", type: "string", required: false }
 ];
 
@@ -25,9 +25,6 @@ class Expenses {
             }
         });
     };
-
-
-
 }
 
 module.exports = { expenses : new Expenses() };
